@@ -1,0 +1,40 @@
+{
+"expressions":[
+{"id":"needful","expr":"do the needful","sens":"do what is necessary","exemple":"Kindly confirm the address and do the needful.","standard":"please take care of it / please do what is needed"},
+{"id":"prepone","expr":"prepone","sens":"move something to an earlier time","exemple":"Can we prepone the meeting to Wednesday?","standard":"bring forward / move up"},
+{"id":"revert","expr":"revert","sens":"reply, get back to someone","exemple":"I will revert by tomorrow evening.","standard":"reply / get back to you"},
+{"id":"outofstation","expr":"out of station","sens":"away from one's home town","exemple":"I am out of station till Monday.","standard":"out of town / away"},
+{"id":"same","expr":"the same","sens":"it, the thing just mentioned","exemple":"I have updated the report and attached the same.","standard":"it"},
+{"id":"earliest","expr":"at the earliest","sens":"as soon as possible","exemple":"Please dispatch the parts at the earliest.","standard":"as soon as possible"},
+{"id":"doubt","expr":"I have a doubt","sens":"I have a question","exemple":"I have a doubt regarding the tolerance on this drawing.","standard":"I have a question"},
+{"id":"passout","expr":"pass out (of college)","sens":"graduate","exemple":"I passed out of engineering college in 2019.","standard":"graduate"},
+{"id":"lakh","expr":"one lakh","sens":"one hundred thousand","exemple":"The plant produced two lakh units this year.","standard":"100,000 (two lakh = 200,000)"},
+{"id":"crore","expr":"one crore","sens":"ten million","exemple":"The new line cost four crore rupees.","standard":"10,000,000 (one crore = 100 lakh)"},
+{"id":"eod","expr":"by EOD","sens":"before the end of the working day","exemple":"I will share the file by EOD.","standard":"by the end of the day (often Indian time: check)"},
+{"id":"only","expr":"… only (at the end of a sentence)","sens":"a word used for emphasis, not to mean 'just'","exemple":"I sent it yesterday only.","standard":"I sent it just yesterday / I did send it yesterday"}
+],
+"traits":[
+{"titre":"Des « t » et des « d » plus durs","texte":"La langue se recourbe vers le palais : « t », « d » et « r » sonnent plus ronds et plus marqués qu'en anglais britannique.","exemple":"The data is updated in today's report."},
+{"titre":"« v » et « w » très proches","texte":"« Very » et « wery », « vibration » et « wibration » peuvent se confondre. Le contexte suffit presque toujours.","exemple":"We will verify the vibration values this week."},
+{"titre":"Le « th » devient souvent « t » ou « d »","texte":"« Three » peut ressembler à « tree », « this » à « dis ». C'est régulier : une fois repéré, on s'y habitue vite.","exemple":"I think this is the third thing to check."},
+{"titre":"Un rythme plus régulier","texte":"Chaque syllabe a à peu près la même durée, et l'accent tonique tombe parfois ailleurs que dans l'anglais britannique (« deVElop » peut devenir « DEvelop »).","exemple":"We need to develop the component by December."},
+{"titre":"Un débit rapide","texte":"Beaucoup de locuteurs parlent vite. Demander de ralentir est normal et bien accepté.","exemple":"Sorry, could you slow down a little? I want to be sure I understand."},
+{"titre":"Des questions en fin de phrase","texte":"« Isn't it? » ou « no? » servent souvent de confirmation, quelle que soit la phrase.","exemple":"You have received the drawing, no?"}
+],
+"interculturel":[
+{"id":"non","titre":"Un « oui » n'est pas toujours un accord","texte":"« Yes » peut vouloir dire « j'ai entendu ». Un refus direct est souvent évité : « we will try », « it may be difficult », « let me check » signalent un vrai risque. Pose des questions ouvertes plutôt que « is it OK? ».","phrase":"What could prevent us from meeting this date?"},
+{"id":"ecrit","titre":"Confirmer par écrit","texte":"Après un appel, envoie un court message qui liste les décisions, les responsables et les dates. C'est apprécié, et cela règle les malentendus dus à l'accent ou à la connexion.","phrase":"Just to confirm what we agreed on the call."},
+{"id":"direnon","titre":"Dire non sans braquer","texte":"Montre que tu comprends, donne la contrainte, puis propose autre chose.","phrase":"I am afraid that would be difficult, because the tests need ten more days. What we could do instead is send an interim report."},
+{"id":"heure","titre":"Le décalage horaire","texte":"L'Inde est à UTC+5:30 et ne change pas d'heure : 3 h 30 d'avance sur la France en été, 4 h 30 en hiver. Le créneau commun va de 9 h à 13 h environ, heure française. Précise toujours le fuseau.","phrase":"Shall we say 10 am French time, which is 2:30 pm IST?"},
+{"id":"hierarchie","titre":"La hiérarchie compte","texte":"Un collègue peut hésiter à contredire un responsable ou à annoncer une mauvaise nouvelle en réunion. Un message individuel après l'appel donne souvent une réponse plus franche.","phrase":"Is there anything you would like to add that we did not cover in the meeting?"},
+{"id":"fetes","titre":"Jours fériés et fêtes","texte":"Diwali, Holi, la fête de l'Indépendance (15 août) et beaucoup de fêtes régionales ferment les bureaux. Demande le calendrier de l'équipe en début de projet.","phrase":"Could you share your list of public holidays for this year?"}
+],
+"quiz":[
+{"id":"ind-q-01","cats":["interculturel"],"questions":[{"q":"Your colleague says: “We will try our best, but it may be slightly difficult.” What should you understand?","options":["The deadline will certainly be met.","There is a real risk that the deadline will not be met.","He refuses to do the work.","He needs more people."],"answer":1,"cat":"interculturel","why":"Un refus direct est souvent évité. Demande ce qui pourrait empêcher de tenir la date."}]},
+{"id":"ind-q-02","cats":["interculturel"],"questions":[{"q":"It is 10:00 am in France in January. What time is it in India (IST)?","options":["1:30 pm","2:30 pm","3:30 pm","5:30 am"],"answer":1,"cat":"interculturel","why":"En hiver, l'Inde a 4 h 30 d'avance sur la France (3 h 30 en été)."}]},
+{"id":"ind-q-03","cats":["interculturel"],"questions":[{"q":"After a call with a poor connection, what is the best thing to do?","options":["Nothing, to avoid offending anyone.","Call again the next day to repeat everything.","Send a short written summary of the decisions, owners and dates.","Ask your manager to join the next call."],"answer":2,"cat":"interculturel"}]},
+{"id":"ind-q-04","cats":["indien"],"questions":[{"q":"“The project cost 2 crore rupees and we produced 3 lakh parts.” Which figures are correct?","options":["2,000,000 rupees and 30,000 parts","20,000,000 rupees and 300,000 parts","200,000 rupees and 3,000 parts","20,000,000 rupees and 3,000,000 parts"],"answer":1,"cat":"indien","why":"1 lakh = 100 000 ; 1 crore = 10 000 000."}]},
+{"id":"ind-q-05","cats":["interculturel"],"questions":[{"q":"Which question is most likely to reveal a problem with a deadline?","options":["Is Friday OK?","You can do it by Friday, right?","What could prevent us from delivering on Friday?","Friday is confirmed, yes?"],"answer":2,"cat":"interculturel","why":"Une question ouverte laisse la place à une réponse nuancée ; une question fermée appelle un « yes » de politesse."}]},
+{"id":"ind-q-06","cats":["indien"],"questions":[{"q":"“I have a doubt in slide 4.” What does your colleague mean?","options":["He thinks slide 4 is wrong.","He has a question about slide 4.","He does not trust you.","He wants to delete slide 4."],"answer":1,"cat":"indien"}]}
+]
+}

@@ -1,0 +1,108 @@
+:root {
+  --fond: #f5f5f3; --carte: #ffffff; --encre: #0b0b0b; --encre2: #52514e; --attenue: #898781;
+  --trait: #e1e0d9; --axe: #c3c2b7; --accent: #1c5cab; --accent-clair: #dcebfc; --sur-accent: #fff;
+  --serie: #2a78d6; --bon: #0a7a0a; --bon-fond: #e3f4e3; --faux: #c22f2f; --faux-fond: #fbe6e6;
+  --alerte-fond: #fff3d6;
+  /* Les surfaces se détachent par une ombre douce plutôt que par un trait. */
+  --ombre: 0 1px 2px rgba(0, 0, 0, .04), 0 6px 20px rgba(0, 0, 0, .06);
+  --bord: transparent;
+  --barre: rgba(255, 255, 255, .72);
+  --barre-trait: rgba(0, 0, 0, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #0d0d0d; --carte: #1a1a19; --encre: #f0efec; --encre2: #c3c2b7; --trait: #2c2c2a; --axe: #383835;
+    --accent: #5598e7; --accent-clair: #0d366b; --sur-accent: #0b0b0b; --serie: #3987e5;
+    --bon: #4cc24c; --bon-fond: #12300f; --faux: #e66767; --faux-fond: #3a1515; --alerte-fond: #3a2f10;
+    /* En sombre, une ombre ne se voit pas : un trait fin la remplace. */
+    --ombre: none; --bord: #2c2c2a;
+    --barre: rgba(26, 26, 25, .72); --barre-trait: rgba(255, 255, 255, .1);
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fond); color: var(--encre); font: 100%/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+main { max-width: 40rem; margin: 0 auto; padding: 1.25rem 1rem calc(5.5rem + env(safe-area-inset-bottom)); }
+
+/* Typographie : plus le texte est grand, plus l'interlettrage et l'interligne se resserrent. */
+h1 { font-size: 1.85rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.022em; margin: .25rem 0 1rem; }
+h2 { font-size: 1.2rem; font-weight: 650; line-height: 1.25; letter-spacing: -0.012em; margin: 1.75rem 0 .5rem; }
+h3 { font-size: 1rem; font-weight: 600; line-height: 1.3; margin: 1rem 0 .25rem; }
+p { margin: .5rem 0; }
+a { color: var(--accent); }
+.petit { font-size: .85rem; line-height: 1.4; letter-spacing: .005em; color: var(--encre2); }
+.centre { text-align: center; }
+
+.carte { background: var(--carte); border: 1px solid var(--bord); box-shadow: var(--ombre); border-radius: 1.1rem; padding: 1rem; margin: .75rem 0; }
+.alerte { background: var(--alerte-fond); border-radius: 1rem; padding: .85rem 1rem; margin: .75rem 0; }
+
+button, .bouton { font: inherit; font-weight: 500; min-height: 3rem; padding: .6rem 1rem; border-radius: .9rem; border: 1px solid var(--bord); box-shadow: var(--ombre); background: var(--carte); color: var(--encre); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; transition: transform 100ms ease-out, opacity 100ms ease-out; touch-action: manipulation; }
+button.principal, .bouton.principal { background: var(--accent); color: var(--sur-accent); border-color: var(--accent); font-weight: 650; }
+button.large, .bouton.large { width: 100%; margin: .4rem 0; }
+/* Réponse immédiate à l'appui, pas au relâchement. */
+button:active:not(:disabled), .bouton:active, .tuile:active, label.option:active { transform: scale(.97); }
+button:disabled { opacity: .45; cursor: default; box-shadow: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.rangee { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: .5rem 0; }
+.rangee > button { flex: 1 1 auto; }
+.grille { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.tuile { background: var(--carte); border: 1px solid var(--bord); box-shadow: var(--ombre); border-radius: 1.1rem; padding: .9rem; text-decoration: none; color: inherit; display: block; min-height: 5.5rem; transition: transform 100ms ease-out; }
+.tuile b, .tuile span { display: block; }
+.tuile b { font-weight: 600; line-height: 1.25; margin-bottom: .2rem; }
+.tuile .niveau { font-size: 1.75rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-top: .3rem; }
+
+input[type=text], textarea, select { font: inherit; width: 100%; padding: .75rem; border-radius: .9rem; border: 1px solid var(--axe); background: var(--carte); color: var(--encre); }
+textarea { min-height: 7.5rem; resize: vertical; }
+label.option { display: flex; gap: .65rem; align-items: flex-start; padding: .75rem; border: 1px solid var(--trait); border-radius: .9rem; margin: .4rem 0; background: var(--carte); min-height: 3rem; transition: transform 100ms ease-out; }
+label.option input { margin-top: .25rem; width: 1.15rem; height: 1.15rem; flex: none; accent-color: var(--accent); }
+label.option.bon { background: var(--bon-fond); border-color: var(--bon); }
+label.option.faux { background: var(--faux-fond); border-color: var(--faux); }
+fieldset.carte { min-width: 0; }
+.texte-lecture { background: var(--carte); border: 1px solid var(--bord); box-shadow: var(--ombre); border-radius: 1rem; padding: 1rem; white-space: pre-line; line-height: 1.6; }
+.retour { border-radius: 1rem; padding: .85rem 1rem; margin: .75rem 0; }
+.retour.bon { background: var(--bon-fond); }
+.retour.faux { background: var(--faux-fond); }
+.mot-ok { color: var(--bon); }
+.mot-ko { color: var(--faux); text-decoration: underline wavy; font-weight: 600; }
+.progression { height: .35rem; background: var(--trait); border-radius: 99px; overflow: hidden; margin: .25rem 0 1rem; }
+.progression i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.etiquette { display: inline-block; font-size: .78rem; letter-spacing: .01em; padding: .15rem .6rem; border-radius: 99px; background: var(--accent-clair); color: var(--encre); margin: 0 .25rem .25rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; line-height: 1.35; }
+th { font-weight: 600; color: var(--encre2); font-size: .8rem; }
+th, td { text-align: left; padding: .45rem .25rem; border-bottom: 1px solid var(--trait); }
+tbody tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+details { margin: .5rem 0; }
+summary { cursor: pointer; padding: .6rem 0; font-weight: 600; }
+
+/* Barre d'onglets translucide : le contenu défile dessous. */
+nav#onglets { position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: var(--barre); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); border-top: 1px solid var(--barre-trait); padding-bottom: env(safe-area-inset-bottom); z-index: 5; }
+nav#onglets a { flex: 1; text-align: center; padding: .5rem .1rem; font-size: .72rem; font-weight: 500; letter-spacing: .01em; color: var(--encre2); text-decoration: none; min-height: 3.5rem; transition: transform 100ms ease-out; }
+nav#onglets a:active { transform: scale(.94); }
+nav#onglets a span { display: block; font-size: 1.25rem; line-height: 1.3; }
+nav#onglets a.actif { color: var(--accent); font-weight: 700; }
+body.en-seance nav#onglets { display: none; }
+
+.graphes { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.graphes figure { margin: 0; background: var(--carte); border: 1px solid var(--bord); box-shadow: var(--ombre); border-radius: 1rem; padding: .6rem; }
+.graphes figcaption { font-size: .8rem; font-weight: 500; color: var(--encre2); }
+.graphes svg { width: 100%; height: auto; display: block; }
+.graphes svg text { fill: var(--attenue); font-size: 9px; }
+.graphes svg .val { fill: var(--encre); font-weight: 700; font-size: 11px; }
+.graphes svg .grille-h { stroke: var(--trait); stroke-width: 1; }
+.graphes svg .ligne { stroke: var(--serie); stroke-width: 2; fill: none; stroke-linejoin: round; }
+.graphes svg .point { fill: var(--serie); stroke: var(--carte); stroke-width: 2; }
+
+/* Accessibilité : moins de mouvement, moins de transparence, plus de contraste. */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  button:active:not(:disabled), .bouton:active, .tuile:active, label.option:active, nav#onglets a:active { transform: none; opacity: .7; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  nav#onglets { background: var(--carte); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  :root { --bord: var(--encre2); --barre-trait: var(--encre2); }
+  nav#onglets { background: var(--carte); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
