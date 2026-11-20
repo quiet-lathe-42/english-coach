@@ -4,6 +4,7 @@ import { etat, charger, COMPETENCES, CATEGORIES, NIVEAUX, FENETRE, SEUIL_MONTEE,
 import { ACCENTS, reglages, sauverReglages, initVoix, aSynthese, aReco, voixPour, nbVoix, dire, arreter } from './voix.js';
 import { afficher, h } from './exercices.js';
 import { calculer, htmlBilan, htmlGraphes, archiver, resumePourClaude, exporter, importer, toutEffacer } from './bilans.js';
+import { synchroniser, urlSuivi, etatSuivi, enAttente, definirUrl, tester, adresseValide } from './suivi.js';
 
 const ecran = document.getElementById('ecran');
 const JOUR = 864e5;
@@ -28,7 +29,7 @@ async function lancerSeance(exercices, titre, { placement = false } = {}) {
     document.getElementById('quitter').onclick = () => { location.hash = placement ? '#/accueil' : '#/entrainement'; };
     const { resultats, accent } = await afficher(ex, document.getElementById('zone'));
     if (seanceEnCours !== jeton) return null;
-    const ch = await enregistrer(ex, resultats, { placement, accent });
+    const ch = await enregistrer(ex, resultats, { placement, accent, seance: titre });
     if (ch) changements.push(ch);
     bilan.push({ ex, resultats });
   }
@@ -39,6 +40,7 @@ async function lancerSeance(exercices, titre, { placement = false } = {}) {
 
 function finDeSeance(res, titre) {
   if (!res) return;
+  synchroniser();
   const tout = res.bilan.flatMap(b => b.resultats), bons = tout.filter(r => r.ok).length;
   const ratees = [...new Set(tout.filter(r => !r.ok).flatMap(r => r.cats))];
   page(`<h1>Séance terminée</h1>
@@ -200,7 +202,16 @@ async function bilans() {
 }
 
 // ---------- Réglages ----------
-function ecranReglages() {
+async function texteSuivi() {
+  const url = await urlSuivi(), dernier = await etatSuivi(), attente = await enAttente();
+  if (!url) return 'Suivi désactivé.';
+  const quand = dernier ? new Date(dernier.t).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+  return (dernier ? `Dernier envoi le ${quand} : ${dernier.ok ? '✅ réussi' : '❌ échec (' + dernier.erreur + ')'}.` : 'Aucun envoi pour l’instant.')
+    + ` ${attente} réponse${attente > 1 ? 's' : ''} en attente.`;
+}
+
+async function ecranReglages(messageSuivi = '') {
+  const url = await urlSuivi(), etatTexte = messageSuivi || await texteSuivi();
   const options = (liste, courant) => liste.map(([v, t]) => `<option value="${h(v)}" ${String(v) === String(courant) ? 'selected' : ''}>${h(t)}</option>`).join('');
   page(`<h1>Réglages</h1>
     <h2>Voix</h2>
@@ -221,6 +232,12 @@ function ecranReglages() {
     <h2>Correction de l'écrit</h2>
     <label>Orthographe attendue<select id="lt">${options([['en-GB', 'Britannique (colour) — celle de l\'Inde'], ['en-US', 'Américaine (color)']], reglages.langueCorrection)}</select></label>
     <p class="petit">La correction envoie ton texte à LanguageTool, un service tiers gratuit.</p>
+    <h2>Suivi automatique par Claude</h2>
+    <p class="petit">Après chaque séance, tes réponses (textes compris) partent dans ton Google Sheets privé « English Coach (suivi) ». Chaque soir à 21 h, Claude les lit, t'envoie un bilan par mail et ajoute des exercices sur tes points faibles.</p>
+    <input type="text" id="suivi-url" placeholder="https://script.google.com/macros/s/…/exec?k=…" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" value="${h(url)}">
+    <button class="principal large" id="suivi-ok">Enregistrer et tester</button>
+    ${url ? '<div class="rangee"><button id="suivi-envoi">Envoyer maintenant</button><button id="suivi-stop">Arrêter le suivi</button></div>' : ''}
+    <p class="petit" id="suivi-etat">${h(etatTexte)}</p>
     <h2>Mes données</h2>
     <p class="petit">Tout est stocké sur ce téléphone. Exporte de temps en temps pour ne rien perdre.</p>
     <button class="large" id="export">⬇️ Exporter mes données (JSON)</button>
@@ -236,11 +253,40 @@ function ecranReglages() {
   document.getElementById('import').onchange = async e => {
     try { await importer(await e.target.files[0].text()); location.reload(); } catch (err) { msg.textContent = 'Import impossible : ' + err.message; }
   };
+  const etatEl = document.getElementById('suivi-etat');
+  // Un envoi peut être en cours (lancé à l'ouverture de l'écran) : on rafraîchit l'état quand il se termine.
+  if (url && !messageSuivi) synchroniser().then(async () => { if (document.body.contains(etatEl)) etatEl.textContent = await texteSuivi(); });
+  document.getElementById('suivi-ok').onclick = () => activerSuivi(document.getElementById('suivi-url').value.trim(), etatEl);
+  if (url) {
+    document.getElementById('suivi-envoi').onclick = async () => {
+      etatEl.textContent = 'Envoi en cours…';
+      const r = await synchroniser();
+      etatEl.textContent = { ok: `✅ Envoyé (${r.ajoutees} nouvelle${r.ajoutees > 1 ? 's' : ''} réponse${r.ajoutees > 1 ? 's' : ''} dans le tableau).`, ajour: '✅ Tout est déjà envoyé.', horsligne: 'Pas de connexion : l’envoi se fera plus tard.', erreur: '❌ Échec : ' + r.erreur }[r.statut] || '';
+    };
+    document.getElementById('suivi-stop').onclick = async () => { await definirUrl(''); ecranReglages('Suivi arrêté. Tes résultats restent sur le téléphone.'); };
+  }
   let confirme = false;
   document.getElementById('effacer').onclick = async e => {
     if (!confirme) { confirme = true; e.currentTarget.textContent = '⚠️ Touche encore une fois pour tout effacer'; return; }
     await toutEffacer(); location.hash = '#/accueil'; location.reload();
   };
+}
+
+async function activerSuivi(u, etatEl) {
+  if (!adresseValide(u)) { etatEl.textContent = '❌ Cette adresse ne ressemble pas à celle du script (elle doit commencer par https://script.google.com/macros/s/ et finir par ?k=…).'; return; }
+  etatEl.textContent = 'Test de la connexion…';
+  try { await tester(u); } catch (e) { etatEl.textContent = '❌ Le script ne répond pas correctement : ' + e.message; return; }
+  await definirUrl(u);
+  const r = await synchroniser();
+  await ecranReglages(r.statut === 'erreur' ? '✅ Connexion réussie, mais l’envoi a échoué : ' + r.erreur : `✅ Suivi activé. ${r.ajoutees ? r.ajoutees + ' réponse' + (r.ajoutees > 1 ? 's' : '') + ' envoyée' + (r.ajoutees > 1 ? 's' : '') + '.' : ''}`);
+}
+
+// Lien de configuration reçu par mail : #/config?suivi=<adresse encodée>
+async function configurer(params) {
+  history.replaceState(null, '', '#/reglages');
+  document.querySelectorAll('#onglets a').forEach(a => a.classList.toggle('actif', a.dataset.tab === 'reglages'));
+  await ecranReglages('Configuration du suivi…');
+  await activerSuivi(params.get('suivi') || '', document.getElementById('suivi-etat'));
 }
 
 // ---------- Navigation ----------
@@ -257,6 +303,8 @@ function router() {
   arreter();
   seanceEnCours = null;
   document.body.classList.remove('en-seance');
+  synchroniser();
+  if (location.hash.startsWith('#/config?')) { configurer(new URLSearchParams(location.hash.slice(9))); return; }
   const [, route = 'accueil', arg] = location.hash.split('/');
   document.querySelectorAll('#onglets a').forEach(a => a.classList.toggle('actif', a.dataset.tab === route));
   const ecrans = { accueil, entrainement, indien, bilans, reglages: ecranReglages, positionnement: ecranPositionnement, carnet, liens, seance: () => (SEANCES[arg] || SEANCES.jour)() };
@@ -274,6 +322,7 @@ async function demarrer() {
     return;
   }
   window.addEventListener('hashchange', router);
+  window.addEventListener('online', () => synchroniser());
   router();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker non installé', e));
 }

@@ -119,7 +119,7 @@ export async function exporter() {
   const donnees = {
     application: 'english-coach', version: 1, date: new Date().toISOString(),
     tentatives: etat.tentatives, revisions: Object.values(etat.revisions),
-    kv: { niveaux: etat.niveaux, reglages: await kv.get('reglages', {}), bilans: await kv.get('bilans', []), liensPerso: await kv.get('liensPerso', []) }
+    kv: { niveaux: etat.niveaux, reglages: await kv.get('reglages', {}), bilans: await kv.get('bilans', []), liensPerso: await kv.get('liensPerso', []), appareil: await kv.get('appareil', ''), suiviDernierId: await kv.get('suiviDernierId', 0) }
   };
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify(donnees, null, 1)], { type: 'application/json' }));

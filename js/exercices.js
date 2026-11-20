@@ -100,7 +100,7 @@ function dictee(ex, zone, fin, noterAccent) {
   valider.onclick = () => {
     if (!saisie.value.trim()) return;
     const c = comparer(ex.audio, saisie.value), ok = c.ratio >= SEUIL_DICTEE;
-    fin([{ ok, cats: ex.cats || ['dictee'], detail: ok ? '' : `Dictée : « ${ex.audio} » — mots manqués : ${c.rates.join(', ')}` }],
+    fin([{ ok, cats: ex.cats || ['dictee'], texte: saisie.value, detail: ok ? '' : `Dictée : « ${ex.audio} » — mots manqués : ${c.rates.join(', ')}` }],
       `<p>${marquer(c.marques)}</p><p class="petit">${Math.round(c.ratio * 100)} % des mots retrouvés (il en faut ${SEUIL_DICTEE * 100} %).</p>`);
   };
 }
@@ -114,7 +114,7 @@ function correction(ex, zone, fin) {
   zone.append(saisie, valider);
   valider.onclick = () => {
     const ok = ex.answers.some(a => memePhrase(a, saisie.value));
-    fin([{ ok, cats: ex.cats, detail: ok ? '' : `« ${ex.wrong} » → « ${ex.answers[0]} » (ta réponse : « ${saisie.value.trim()} »)` }],
+    fin([{ ok, cats: ex.cats, texte: saisie.value, detail: ok ? '' : `« ${ex.wrong} » → « ${ex.answers[0]} » (ta réponse : « ${saisie.value.trim()} »)` }],
       `<p>Correction : <b>${h(ex.answers[0])}</b></p><p class="petit">${h(ex.explain || '')}</p>`);
   };
 }
@@ -149,7 +149,7 @@ function redaction(ex, zone, fin) {
     suite.append(terminer);
     terminer.onclick = () => {
       const note = noteGrille(suite), ok = note >= SEUIL_GRILLE;
-      const resultats = [{ ok, cats: ex.cats, detail: ok ? '' : `Rédaction « ${ex.prompt.slice(0, 60)}… » : grille remplie à ${Math.round(note * 100)} %` }];
+      const resultats = [{ ok, cats: ex.cats, texte: saisie.value, detail: ok ? '' : `Rédaction « ${ex.prompt.slice(0, 60)}… » : grille remplie à ${Math.round(note * 100)} %` }];
       if (rep && rep.statut === 'ok') {
         const parCat = {};
         for (const f of rep.fautes) if (f.cat) (parCat[f.cat] = parCat[f.cat] || []).push(f);
@@ -217,7 +217,7 @@ function direPhrase(ex, zone, fin, noterAccent) {
   valider.onclick = () => {
     const ok = meilleur.c.ratio >= SEUIL_ORAL;
     const viseFocus = (ex.focus || []).some(m => meilleur.c.rates.includes(m.toLowerCase()));
-    fin([{ ok, cats: ok || viseFocus ? ex.cats : ['prononciation'], detail: ok ? '' : `À l'oral : « ${ex.target} » — compris : « ${meilleur.texte} »` }],
+    fin([{ ok, cats: ok || viseFocus ? ex.cats : ['prononciation'], texte: meilleur.texte, detail: ok ? '' : `À l'oral : « ${ex.target} » — compris : « ${meilleur.texte} »` }],
       ex.tip ? `<p class="petit">${h(ex.tip)}</p>` : '');
   };
 }
@@ -287,7 +287,8 @@ function situation(ex, zone, fin) {
     suite.append(terminer);
     terminer.onclick = () => {
       const note = noteGrille(suite), ok = note >= SEUIL_GRILLE;
-      fin([{ ok, cats: ex.cats, detail: ok ? '' : `Mise en situation « ${ex.prompt.slice(0, 60)}… » : grille remplie à ${Math.round(note * 100)} %` }]);
+      const dit = aReco && !texte.hidden && texte.textContent !== '…' ? texte.textContent : '';
+      fin([{ ok, cats: ex.cats, texte: dit, detail: ok ? '' : `Mise en situation « ${ex.prompt.slice(0, 60)}… » : grille remplie à ${Math.round(note * 100)} %` }]);
     };
   };
 }

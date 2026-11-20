@@ -72,10 +72,10 @@ export async function fixerNiveaux(crans) {
 }
 
 // Enregistre les réponses d'un exercice. Renvoie un changement de niveau éventuel.
-export async function enregistrer(ex, resultats, { placement = false, accent = '' } = {}) {
+export async function enregistrer(ex, resultats, { placement = false, accent = '', seance = '' } = {}) {
   const t = Date.now();
   for (const r of resultats) {
-    const ligne = { t, exId: ex.id, skill: ex.skill, level: ex.level, type: ex.type, ok: !!r.ok, cats: r.cats || ex.cats || [], detail: r.detail || '', accent, placement };
+    const ligne = { t, exId: ex.id, skill: ex.skill, level: ex.level, type: ex.type, ok: !!r.ok, cats: r.cats || ex.cats || [], detail: r.detail || '', texte: (r.texte || '').trim().slice(0, 3000), accent, placement, seance };
     ligne.id = await db.add('tentatives', ligne);
     etat.tentatives.push(ligne);
   }
